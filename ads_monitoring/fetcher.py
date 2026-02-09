@@ -92,18 +92,21 @@ def parse_offers(html: str) -> list[dict[str, str]]:
 
     best_table = None
     best_mapping: dict[int, str] = {}
+    best_header_row_index: int | None = None
     for table in tables:
-        header_cells = table.find_all("th")
-        headers = [_text(cell) for cell in header_cells]
-        if not headers:
-            first_row = table.find("tr")
-            if not first_row:
+        rows = table.find_all("tr")
+        if not rows:
+            continue
+        for idx, row in enumerate(rows):
+            cells = row.find_all(["th", "td"])
+            if not cells:
                 continue
-            headers = [_text(cell) for cell in first_row.find_all("td")]
-        mapping = _match_headers(headers)
-        if len(mapping) > len(best_mapping):
-            best_mapping = mapping
-            best_table = table
+            headers = [_text(cell) for cell in cells]
+            mapping = _match_headers(headers)
+            if len(mapping) > len(best_mapping):
+                best_mapping = mapping
+                best_table = table
+                best_header_row_index = idx
 
     if not best_table or not best_mapping:
         raise OfferParseError(
@@ -112,8 +115,9 @@ def parse_offers(html: str) -> list[dict[str, str]]:
         )
 
     rows = best_table.find_all("tr")
+    start_index = (best_header_row_index or 0) + 1
     offers: list[dict[str, str]] = []
-    for row in rows[1:]:
+    for row in rows[start_index:]:
         cells = row.find_all(["td", "th"])
         if not cells:
             continue
