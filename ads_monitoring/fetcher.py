@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import logging
+import re
 from typing import Iterable
 
 import requests
@@ -54,8 +56,12 @@ def fetch_html(url: str, timeout_seconds: int) -> str:
     return response.text
 
 
+logger = logging.getLogger(__name__)
+
+
 def _normalize_header(text: str) -> str:
-    return " ".join(text.lower().strip().split())
+    cleaned = re.sub(r"[^\w]+", " ", text.lower())
+    return " ".join(cleaned.strip().split())
 
 
 def _match_headers(headers: Iterable[str]) -> dict[int, str]:
@@ -63,9 +69,14 @@ def _match_headers(headers: Iterable[str]) -> dict[int, str]:
     normalized = [_normalize_header(header) for header in headers]
     for idx, header in enumerate(normalized):
         for field, aliases in HEADER_ALIASES.items():
-            if header in aliases:
+            normalized_aliases = {_normalize_header(alias) for alias in aliases}
+            if header in normalized_aliases or any(
+                alias and alias in header for alias in normalized_aliases
+            ):
                 mapping[idx] = field
                 break
+        if idx not in mapping:
+            logger.debug("Unmatched header: %s", headers[idx])
     return mapping
 
 
