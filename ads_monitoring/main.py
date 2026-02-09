@@ -6,7 +6,7 @@ from ads_monitoring.compare import compare_pairs, format_comparison
 from ads_monitoring.config import load_settings
 from ads_monitoring.fetcher import collect_offers, count_pairs, offers_to_rows
 from ads_monitoring.sheets import SheetsClient
-from ads_monitoring.telegram_client import send_notifications
+from ads_monitoring.telegram import send_message
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -38,13 +38,7 @@ def run() -> None:
     comparison = compare_pairs(current_pairs, previous_pairs)
     message = format_comparison(comparison)
     logging.info("Sending Telegram notification")
-    send_notifications(
-        settings.telegram_api_id,
-        settings.telegram_api_hash,
-        settings.telegram_session_file,
-        settings.telegram_contacts,
-        message,
-    )
+    send_message(settings.telegram_bot_token, settings.telegram_channel_id, message)
 
 
 if __name__ == "__main__":

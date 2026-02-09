@@ -6,7 +6,7 @@
 - Python 3.10+
 - Доступ к странице офферов без авторизации
 - Google Sheets API (Service Account)
-- Telegram аккаунт (через Telethon)
+- Telegram бот (отправка в канал)
 
 ## Настройка Google Sheets
 1. Перейдите в [Google Cloud Console](https://console.cloud.google.com/), создайте проект.
@@ -23,10 +23,8 @@
 - `GOOGLE_SERVICE_ACCOUNT_FILE` — путь к JSON ключу.
 - `SHEET_CURRENT_NAME` — имя листа с текущими данными (`current`).
 - `SHEET_PREVIOUS_NAME` — имя листа с предыдущими данными (`previous`).
-- `TELEGRAM_API_ID` — API ID Telegram.
-- `TELEGRAM_API_HASH` — API hash Telegram.
-- `TELEGRAM_SESSION_FILE` — файл сессии Telethon (например, `telegram.session`).
-- `TELEGRAM_CONTACTS` — список контактов через запятую (username или phone).
+- `TELEGRAM_BOT_TOKEN` — токен бота.
+- `TELEGRAM_CHANNEL_ID` — ID канала (например, `-1001234567890`) или @channelname.
 - `REQUEST_TIMEOUT_SECONDS` — таймаут запросов.
 
 ## Установка
@@ -56,10 +54,8 @@ python -m ads_monitoring.main
    export GOOGLE_SERVICE_ACCOUNT_FILE="/home/<username>/ads_monitoring/credentials.json"
    export SHEET_CURRENT_NAME="current"
    export SHEET_PREVIOUS_NAME="previous"
-   export TELEGRAM_API_ID="<api_id>"
-   export TELEGRAM_API_HASH="<api_hash>"
-   export TELEGRAM_SESSION_FILE="/home/<username>/ads_monitoring/telegram.session"
-   export TELEGRAM_CONTACTS="username1,username2"
+   export TELEGRAM_BOT_TOKEN="<token>"
+   export TELEGRAM_CHANNEL_ID="-1001234567890"
    export REQUEST_TIMEOUT_SECONDS="30"
    ```
 5. **Проверьте ручной запуск**:
@@ -67,7 +63,6 @@ python -m ads_monitoring.main
    workon ads_monitoring
    python -m ads_monitoring.main
    ```
-   При первом запуске Telethon попросит код подтверждения и может запросить пароль 2FA.
 6. **Настройте расписание** через вкладку **Tasks**:
    - Command: `workon ads_monitoring && python -m ads_monitoring.main`
    - Schedule: `Every hour`

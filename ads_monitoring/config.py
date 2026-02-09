@@ -11,10 +11,8 @@ class Settings:
     google_service_account_file: str
     sheet_current_name: str
     sheet_previous_name: str
-    telegram_api_id: int
-    telegram_api_hash: str
-    telegram_session_file: str
-    telegram_contacts: list[str]
+    telegram_bot_token: str
+    telegram_channel_id: str
     request_timeout_seconds: int
 
 
@@ -32,13 +30,7 @@ def load_settings() -> Settings:
         google_service_account_file=_get_env("GOOGLE_SERVICE_ACCOUNT_FILE"),
         sheet_current_name=_get_env("SHEET_CURRENT_NAME", "current"),
         sheet_previous_name=_get_env("SHEET_PREVIOUS_NAME", "previous"),
-        telegram_api_id=int(_get_env("TELEGRAM_API_ID")),
-        telegram_api_hash=_get_env("TELEGRAM_API_HASH"),
-        telegram_session_file=_get_env("TELEGRAM_SESSION_FILE", "telegram.session"),
-        telegram_contacts=[
-            contact.strip()
-            for contact in _get_env("TELEGRAM_CONTACTS").split(",")
-            if contact.strip()
-        ],
+        telegram_bot_token=_get_env("TELEGRAM_BOT_TOKEN"),
+        telegram_channel_id=_get_env("TELEGRAM_CHANNEL_ID"),
         request_timeout_seconds=int(_get_env("REQUEST_TIMEOUT_SECONDS", "30")),
     )
